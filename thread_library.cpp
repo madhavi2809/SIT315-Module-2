@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstdlib>
-#include <thread> // Include std::thread for C++11 threading support
+#include <thread>
 #include <chrono>
 
 using namespace std::chrono;
@@ -41,22 +41,22 @@ int main() {
     auto start = high_resolution_clock::now();
 
     int numThreads = std::thread::hardware_concurrency();
-    std::thread threads[numThreads]; // Using std::thread instead of pthread_t
+    std::thread threads[numThreads];
     ThreadData threadData[numThreads];
-    int chunkSize = size / numThreads;
+    int chunkSize = size / (numThreads); // Update chunk size to 6
     int startIdx = 0;
 
     // Create threads and divide the work among them
     for (int i = 0; i < numThreads; ++i) {
         int endIdx = (i == numThreads - 1) ? size : startIdx + chunkSize;
         threadData[i] = { v1, v2, v3, startIdx, endIdx };
-        threads[i] = std::thread(parallelElementWiseAddition, &threadData[i]); // Using std::thread constructor
+        threads[i] = std::thread(parallelElementWiseAddition, &threadData[i]);
         startIdx = endIdx;
     }
 
     // Join all threads
     for (int i = 0; i < numThreads; ++i) {
-        threads[i].join(); // Joining threads
+        threads[i].join();
     }
 
     auto stop = high_resolution_clock::now();
